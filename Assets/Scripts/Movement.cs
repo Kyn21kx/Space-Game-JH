@@ -1,14 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Auxiliars;
 
 [RequireComponent(typeof(Rigidbody))]
 public class Movement : MonoBehaviour
 {
-    private const string HORIZONTAL_AXIS = "Horizontal";
-    private const string VERTICAL_AXIS = "Vertical";
+	private const string HORIZONTAL_AXIS = "Horizontal";
+	private const string VERTICAL_AXIS = "Vertical";
 
-    private Rigidbody rig; //Físicas
+	private Rigidbody rig; //Físicas
+	[SerializeField] Transform transform;
+	[SerializeField] SpriteRenderer sprite;
 	[SerializeField]
 	private float speed;
 	[SerializeField]
@@ -24,9 +27,6 @@ public class Movement : MonoBehaviour
 	private void Update()
 	{
 		this.HandleInput();
-		Debug.Log($"Mag: {this.input.magnitude}, Input: {this.input}");
-		//Pasa cada frame (variante)
-		//Toda la demás lógica, incluyendo Input
 	}
 
 	private void FixedUpdate()
@@ -34,7 +34,11 @@ public class Movement : MonoBehaviour
 		//Pasa cada 0.2s (a menos que lo cambies)
 		//Lo usamos cada que necesitamos hacer operaciones de física
 		//x: 2, y: 5 (2), x: 4, y: 10
-		Vector3 actualForce = new Vector3(input.x, 0f, input.y);
+		if(this.input == Vector2.zero)
+		{
+			rig.velocity = SpartanMath.Lerp(rig.velocity, Vector3.zero, Time.fixedDeltaTime * 0.5f);
+		}
+		Vector3 actualForce = new Vector3(input.x, input.y, 0f);
 		this.rig.AddForce(actualForce.normalized * speed); //F = kg m/s^2
 	}
 
@@ -42,5 +46,13 @@ public class Movement : MonoBehaviour
 	{
 		this.input.x = Input.GetAxisRaw(HORIZONTAL_AXIS);
 		this.input.y = Input.GetAxisRaw(VERTICAL_AXIS);
-	}
+		this.handleSpriteChange();
+
+    }
+
+	private void handleSpriteChange()
+	{
+		sprite.flipY = this.input.y == -1;
+
+    }
 }
