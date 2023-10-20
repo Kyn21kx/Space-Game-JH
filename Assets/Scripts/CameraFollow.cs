@@ -22,7 +22,7 @@ public class CameraFollow : MonoBehaviour
         offset =  TargetPos - this.transform.position;
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
        FollowTarget( Time.fixedDeltaTime);
     }
@@ -37,9 +37,6 @@ public class CameraFollow : MonoBehaviour
         {
             followingBlend = 0;
         }
-
-        Debug.Log($"{TargetPos}, {offset}");
-        
-        this.transform.position = SpartanMath.SmoothStop(this.transform.position, TargetPos - offset, followingBlend, 2f);
+        this.transform.position = SpartanMath.Lerp(this.transform.position, TargetPos - offset, followingBlend);
     }
 }

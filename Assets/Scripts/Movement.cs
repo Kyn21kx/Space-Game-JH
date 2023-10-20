@@ -11,7 +11,6 @@ public class Movement : MonoBehaviour
 
 	private Rigidbody rig; //Físicas
 	[SerializeField] Transform transform;
-	[SerializeField] SpriteRenderer sprite;
 	[SerializeField]
 	private float speed;
 	[SerializeField]
@@ -46,13 +45,5 @@ public class Movement : MonoBehaviour
 	{
 		this.input.x = Input.GetAxisRaw(HORIZONTAL_AXIS);
 		this.input.y = Input.GetAxisRaw(VERTICAL_AXIS);
-		this.handleSpriteChange();
-
-    }
-
-	private void handleSpriteChange()
-	{
-		sprite.flipY = this.input.y == -1;
-
     }
 }
