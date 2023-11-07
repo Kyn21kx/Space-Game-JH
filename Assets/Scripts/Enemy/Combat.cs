@@ -18,6 +18,8 @@ public class Combat : MonoBehaviour {
 	private GameObject bulletPrefab;
 	[SerializeField]
 	private float bulletSpeed;
+	[SerializeField]
+	private bool canShoot;
 
 	private Transform player;
 	private SpartanTimer cooldownTimer;
@@ -29,6 +31,7 @@ public class Combat : MonoBehaviour {
 	{
 		//Cache the playerRef
 		this.Detected = false;
+		this.canShoot = true;
 		this.player = EntityFetcher.PlayerRef.transform;
 		this.cooldownTimer = new SpartanTimer(TimeMode.Framed);
 	}
@@ -40,22 +43,38 @@ public class Combat : MonoBehaviour {
 		//Distance is the magnitude of the resulting vector
 		//Raíz cuadrada es costosa > Multiplicación
 		this.Detected = distanceVector.sqrMagnitude < this.detectionRadius * this.detectionRadius;
+		this.HandleCooldown();
 		this.Shoot();
 	}
 
 	private void Shoot()
 	{
 		//Initial condition
-		if (!Detected && (this.cooldownTimer.GetCurrentTime(TimeScaleMode.Seconds) < COOLDOWN_TIME_S)) return;
-		this.cooldownTimer.Reset();
+		if (!Detected || !this.canShoot) return;
 		//Instance prefab
 		Bullet instance = Instantiate(this.bulletPrefab, transform.position, Quaternion.identity).GetComponent<Bullet>();
 		//Control the movement of this instance
 		Vector3 targetDir = player.position - transform.position;
 		instance.Shoot(targetDir.normalized, bulletSpeed);
+		this.cooldownTimer.Start();
 		//Raycast
 
 		//Implement cooldown
+	}
+
+	private void HandleCooldown()
+	{
+		float timePassed = this.cooldownTimer.GetCurrentTime(TimeScaleMode.Seconds);
+		Debug.Log($"Time passed: {timePassed}");
+		if (timePassed >= COOLDOWN_TIME_S)
+		{
+			this.canShoot = true;
+			this.cooldownTimer.Stop();
+		}
+		else if (cooldownTimer.Started)
+		{
+			this.canShoot = false;
+		}
 	}
 
 	private void OnDrawGizmos()
