@@ -15,6 +15,7 @@ public class Movement : MonoBehaviour
 	private float speed;
 	[SerializeField]
 	private Vector2 input; //(lados, arriba)
+	private const float MAX_SPEED = 10f;
 
     private void Start()
 	{
@@ -35,10 +36,11 @@ public class Movement : MonoBehaviour
 		//x: 2, y: 5 (2), x: 4, y: 10
 		if(this.input == Vector2.zero)
 		{
-			rig.velocity = SpartanMath.Lerp(rig.velocity, Vector3.zero, Time.fixedDeltaTime * 0.5f);
+			rig.velocity = SpartanMath.Lerp(rig.velocity, Vector3.zero, Time.fixedDeltaTime * 3f);
 		}
 		Vector3 actualForce = new Vector3(input.x, input.y, 0f);
-		this.rig.AddForce(actualForce.normalized * speed); //F = kg m/s^2
+		Vector3 nextVelocity = Vector3.ClampMagnitude(this.rig.velocity + actualForce.normalized * speed, MAX_SPEED); //F = kg m/s^2
+		this.rig.velocity = nextVelocity;
 	}
 
 	private void HandleInput()

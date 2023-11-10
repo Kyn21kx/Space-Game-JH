@@ -18,13 +18,13 @@ public class CameraFollow : MonoBehaviour
 
     private void Start()
     {
-        followingBlend = 0;
+        followingBlend = 0f;
         offset =  TargetPos - this.transform.position;
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
-       FollowTarget( Time.fixedDeltaTime);
+       FollowTarget(Time.fixedDeltaTime);
     }
 
     //Quiero hacer una fn que dado el target y una velocidad, la camara lo siga.
